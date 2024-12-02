@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Build NestJS app
-RUN npx prisma generate
+# RUN npx prisma generate # สร้าง Prisma Client
 
 # เปิดพอร์ตที่ NestJS ใช้ (โดยปกติคือ 3000)
 EXPOSE 8000

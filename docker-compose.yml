@@ -41,3 +41,43 @@ services: # services to be run
       - '8080:80' # host port:container port
     depends_on: # services to be depended on
       - db # service name
+
+# version: '3' # version ของ docker-compose file format (3 เป็นเวอร์ชันที่นิยมใช้)
+# services: # เริ่มต้นการกำหนด service ต่าง ๆ ที่จะรันในโปรเจกต์
+#   docker-demo: # ชื่อของ service
+#     container_name: dockerDemo # ตั้งชื่อ container ที่จะถูกสร้างจาก service นี้
+#     build: . # ระบุว่าให้สร้าง image จาก Dockerfile ในไดเรกทอรีปัจจุบัน (.)
+#     ports: # ระบุ port ที่ต้องการ map ระหว่าง host และ container
+#       - '8003:8000' # map port 8003 ของ host เข้ากับ port 8000 ของ container
+#     environment: # ตัวแปร environment สำหรับ container
+#       DATABASE_URL: 'mysql://root:root@db:3306/docker_demo' # URL ของฐานข้อมูล MySQL ที่ Prisma ใช้
+#     command: > # คำสั่งที่ให้รันเมื่อ container เริ่มทำงาน
+#       sh -c "npx prisma db push &&
+#              npm run start:dev" # ซิงค์ schema กับฐานข้อมูลด้วย `prisma db push` แล้วรัน NestJS แบบ dev
+#     depends_on: # ระบุว่า service นี้ต้องรอ service อื่นทำงานก่อน
+#       - db # รอให้ db service ทำงานก่อน
+#     restart: always # ตั้งค่าให้ container restart อัตโนมัติหากหยุดทำงาน
+
+#   db: # ชื่อของ service
+#     image: mysql:latest # ใช้ image MySQL เวอร์ชันล่าสุด
+#     container_name: db # ตั้งชื่อ container สำหรับ MySQL
+#     command: --default-authentication-plugin=mysql_native_password # กำหนด authentication plugin สำหรับ MySQL (แก้ไขปัญหา client บางตัวเชื่อมต่อไม่ได้)
+#     environment: # ตัวแปร environment สำหรับ MySQL
+#       MYSQL_ROOT_PASSWORD: root # รหัสผ่านของผู้ใช้ root ใน MySQL
+#       MYSQL_DATABASE: docker_demo # ชื่อฐานข้อมูลที่จะถูกสร้างเมื่อเริ่มต้น container
+#     ports: # port ที่เปิดให้ host เชื่อมต่อกับ MySQL
+#       - '3307:3306' # map port 3307 ของ host ไปยัง port 3306 ของ container (default MySQL port)
+#     restart: always # ตั้งค่าให้ container restart อัตโนมัติหากหยุดทำงาน
+
+#   phpmyadmin: # ชื่อของ service
+#     image: phpmyadmin/phpmyadmin:latest # ใช้ image ของ phpMyAdmin เวอร์ชันล่าสุด
+#     container_name: phpmyadmin # ตั้งชื่อ container สำหรับ phpMyAdmin
+#     environment: # ตัวแปร environment สำหรับ phpMyAdmin
+#       PMA_HOST: db # ชื่อ host ของฐานข้อมูล (ชี้ไปยัง service ชื่อ db)
+#       PMA_PORT: 3306 # พอร์ตของ MySQL ภายใน container
+#       PMA_USER: root # ชื่อผู้ใช้ของ MySQL
+#       PMA_PASSWORD: root # รหัสผ่านของผู้ใช้ root
+#     ports: # port ที่เปิดให้เข้าถึง phpMyAdmin
+#       - '8080:80' # map port 8080 ของ host ไปยัง port 80 ของ phpMyAdmin container
+#     depends_on: # ระบุว่า phpMyAdmin ต้องรอให้ db ทำงานก่อน
+#       - db # ชื่อ service ที่ต้องรอ
