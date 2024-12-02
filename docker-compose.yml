@@ -1,0 +1,43 @@
+version: '3' # version of docker-compose
+services: # services to be run
+  docker-demo: # service name
+    # image: docker-demo # image name
+    container_name: dockerDemo # container name
+    build: . # build the image from the current directory
+    ports: # ports to be exposed
+      - '8003:8000' # host port:container port
+    environment:
+      DATABASE_URL: 'mysql://root:root@db:3306/docker_demo' # environment variables
+    command: >
+      sh -c "npx prisma db push &&
+             npm run start:dev"
+
+    depends_on: # คือการระบุว่า service นี้ต้องรอให้ service อื่นๆ ทำงานเสร็จก่อน โดยระบุชื่อ service ที่ต้องการรอ ในที่นี้คือ db
+      - db
+    restart: always # restart the container if it stops
+
+  db: # service name
+    image: mysql:latest # image name
+    container_name: db # container name
+    command: --default-authentication-plugin=mysql_native_password # command to be run
+    environment: # environment variables
+      MYSQL_ROOT_PASSWORD: root # root password
+      MYSQL_DATABASE: docker_demo # database name
+      # MYSQL_USER: docker_demo # database user
+      # MYSQL_PASSWORD: docker_demo # database password
+    ports: # ports to be exposed
+      - '3307:3306' # host port:container port
+    restart: always
+
+  phpmyadmin: # service name
+    image: phpmyadmin/phpmyadmin:latest # image name
+    container_name: phpmyadmin # container name
+    environment: # environment variables
+      PMA_HOST: db # database host
+      PMA_PORT: 3306 # database port
+      PMA_USER: root # database user
+      PMA_PASSWORD: root # database password
+    ports: # ports to be exposed
+      - '8080:80' # host port:container port
+    depends_on: # services to be depended on
+      - db # service name
