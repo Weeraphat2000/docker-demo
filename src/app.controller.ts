@@ -24,13 +24,13 @@ export class AppController {
 
   @Post('user')
   async createUser(@Body() body: { email: string }) {
+    log('createUser', body);
     const hasEmail = await this.prismaService.user.findFirst({
       where: { email: body.email },
     });
     if (hasEmail) {
       throw new NotFoundException('Email already exists');
     }
-    log('createUser', body);
     return this.prismaService.user.create({
       data: {
         email: body.email,
