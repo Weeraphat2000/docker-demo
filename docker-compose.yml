@@ -17,9 +17,9 @@ services: # services to be run
     restart: always # restart the container if it stops
 
   db: # service name
-    image: mysql:latest # image name
+    image: mysql:9.1 # image name
     container_name: db # container name
-    command: --default-authentication-plugin=mysql_native_password # command to be run
+    # command: --default-authentication-plugin=mysql_native_password # command to be run
     environment: # environment variables
       MYSQL_ROOT_PASSWORD: root # root password
       MYSQL_DATABASE: docker_demo # database name
@@ -28,6 +28,8 @@ services: # services to be run
     ports: # ports to be exposed
       - '3307:3306' # host port:container port
     restart: always
+    volumes:
+      - db_data:/var/lib/mysql
 
   phpmyadmin: # service name
     image: phpmyadmin/phpmyadmin:latest # image name
@@ -41,6 +43,9 @@ services: # services to be run
       - '8080:80' # host port:container port
     depends_on: # services to be depended on
       - db # service name
+
+volumes: # volumes to be created
+  db_data: # volume name
 
 # version: '3' # version ของ docker-compose file format (3 เป็นเวอร์ชันที่นิยมใช้)
 # services: # เริ่มต้นการกำหนด service ต่าง ๆ ที่จะรันในโปรเจกต์
@@ -81,3 +86,72 @@ services: # services to be run
 #       - '8080:80' # map port 8080 ของ host ไปยัง port 80 ของ phpMyAdmin container
 #     depends_on: # ระบุว่า phpMyAdmin ต้องรอให้ db ทำงานก่อน
 #       - db # ชื่อ service ที่ต้องรอ
+
+#
+#
+#
+#
+#
+# version: '3'  # ระบุเวอร์ชันของ docker-compose
+
+# services:
+#   docker-demo:
+#     # ------------------
+#     # Service: docker-demo
+#     # ------------------
+#     container_name: dockerDemo  # ชื่อ Container ที่จะสร้าง
+#     build: .  # สั่ง build image จาก Dockerfile ในโฟลเดอร์ปัจจุบัน
+#     ports:
+#       - '8003:8000'  # โยน Port 8000 ใน Container ออกมาเป็น 8003 ของ Host
+#     environment:
+#       # DATABASE_URL เป็นตัวแปรที่ Prisma จะใช้เพื่อเชื่อมต่อ Database
+#       DATABASE_URL: 'mysql://root:root@db:3306/docker_demo'
+#     command: >
+#       # หลัง Container start ขึ้นมา ให้รันคำสั่ง prisma db push (สำหรับ sync schema)
+#       # แล้วจึงรัน npm run start:dev เพื่อเริ่มเซิร์ฟเวอร์
+#       sh -c "npx prisma db push && npm run start:dev"
+#     depends_on:
+#       - db  # ระบุว่า Service นี้จะเริ่มหลังจาก db ถูกสร้างและพร้อมทำงาน
+#     restart: always  # หาก Container ดับไป จะให้ Docker พยายาม start ขึ้นมาอีก
+
+#   db:
+#     # ------------------
+#     # Service: db (MySQL)
+#     # ------------------
+#     image: mysql:8.0  # ดึง Image MySQL เวอร์ชัน 8.0 มาใช้งาน
+#     container_name: db  # ชื่อ Container ที่จะสร้าง
+#     command: --default-authentication-plugin=mysql_native_password
+#       # ใช้ default authentication plugin แบบ mysql_native_password
+#       # เพื่อความเข้ากันได้กับ Client/Tool เก่า ๆ
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root    # กำหนดรหัสผ่าน root
+#       MYSQL_DATABASE: docker_demo  # กำหนดชื่อ Database ให้สร้างอัตโนมัติ
+#     ports:
+#       - '3307:3306'  # โยน Port 3306 ใน Container ออกมาเป็น 3307 ของ Host
+#     volumes:
+#       - db_data:/var/lib/mysql
+#       # ผูก Volume ชื่อ 'db_data' เข้ากับ /var/lib/mysql ใน Container
+#       # เพื่อให้ Data ถูกเก็บไว้แม้จะลบ Container ทิ้ง
+#     restart: always  # หาก Container ดับไป จะให้ Docker พยายาม start ขึ้นมาอีก
+
+#   phpmyadmin:
+#     # ------------------
+#     # Service: phpmyadmin
+#     # ------------------
+#     image: phpmyadmin/phpmyadmin:latest  # ใช้ Image เวอร์ชันล่าสุดของ phpMyAdmin
+#     container_name: phpmyadmin
+#     environment:
+#       PMA_HOST: db        # ให้ phpMyAdmin เชื่อมต่อกับ Service ชื่อ 'db'
+#       PMA_PORT: 3306      # พอร์ตของ MySQL ใน Container
+#       PMA_USER: root      # User ที่ให้ล็อกอิน (root)
+#       PMA_PASSWORD: root  # รหัสผ่านของ root
+#     ports:
+#       - '8080:80'  # เปิดให้เข้าถึง phpMyAdmin ผ่าน http://localhost:8080
+#     depends_on:
+#       - db  # รอให้ Service db เริ่มทำงานก่อน
+
+# volumes:
+#   db_data:
+#     # ประกาศ Volume สำหรับ Service db
+#     # หากต้องการใช้แบบ bind mount (เช่น mapped ไปยังโฟลเดอร์ในโฮสต์)
+#     # สามารถเปลี่ยนเป็น './mysql_data:/var/lib/mysql' แทนได้
