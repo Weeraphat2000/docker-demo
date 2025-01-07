@@ -3,7 +3,7 @@ services: # services to be run
   docker-demo: # service name
     # image: docker-demo # image name
     container_name: dockerDemo # container name
-    build: . # build the image from the current directory
+    build: . # Build the image from the Dockerfile in the current directory
     ports: # ports to be exposed
       - '8003:8000' # host port:container port
     environment:
